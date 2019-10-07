@@ -17,6 +17,7 @@ folder_path = 'C:\Data\korean_face'
 # folder_path = 'C:\Data\FaceData\origin_image_sample'
 
 def main():
+    
     # 2. load dlib model for face detection and landmark used for face cropping
     if is_find_landmark:
         dlib_landmark_model = 'models/shape_predictor_68_face_landmarks.dat'
