@@ -44,7 +44,7 @@ def crop_progress(image):
         pts = np.array([[pt.x, pt.y] for pt in pts]).T
         roi_box = parse_roi_box_from_landmark(pts)
 
-
+        print(roi_box)
         cropped_image = crop_img(image, roi_box)
         # print(cropped_image.shape)
         # forward: one step
