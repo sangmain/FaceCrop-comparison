@@ -86,32 +86,22 @@ def main(save_path):
         print(img_fp)
         img_ori = cv2.imread(img_fp, )
         cropped_image = img_ori
-        # cropped_image = crop_progress(img_ori)
+        cropped_image = crop_progress(img_ori)
         if cropped_image is None:
             # print('crop none')
             continue
         # cv2.imshow("cropped", cropped_image)
        
-        gray = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
-        final_image = background_kill(gray)
-        cv2.imshow("background", final_image)
-        cv2.waitKey()
-        # save_img(cropped_image, img_fp, './' + save_path)
+        save_img(cropped_image, img_fp, './' + save_path)
         ##################### 크롭 이미지 출력
         
         
 
-def background_kill(image):
-    fgbg = cv2.createBackgroundSubtractorMOG2(varThreshold=100)
-    fgmask = fgbg.apply(image)
-
-    return fgmask
-
 
 
 
         
-folder_path = 'D:\Sangmin\BITProjects\lsm\predict'
+folder_path = 'C:\\Users\\Sangmin\\Desktop\\predict'
 STD_SIZE = 224
 main('lsm')
 print("finished")

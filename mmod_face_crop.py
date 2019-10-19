@@ -4,9 +4,9 @@ import argparse
 import time
 from utils.inference import get_suffix, crop_img, parse_roi_box_from_landmark
 import glob
-STD_SIZE = 128
+STD_SIZE = 224
 # handle command line arguments
-folder_path = 'D:\Sangmin\FaceCrop\img'
+folder_path = 'D:\Data\korean_face'
 
 glob_path = folder_path + '/*jpg'
 
@@ -83,9 +83,9 @@ for filename in filenames:
         # cropped_image = image[int(x):int(w), int(y):int(h)]
         cropped_image = image[y:h, x:w]
         print(cropped_image.shape)
-        cv2.imshow("cropped", cropped_image)
+        # cv2.imshow("cropped", cropped_image)
         # cv2.waitKey(0)
         cropped_image = cv2.resize(cropped_image, dsize=(STD_SIZE, STD_SIZE), interpolation=cv2.INTER_LINEAR)
 
-        save_img(cropped_image, filename, './Taehwan')
+        save_img(cropped_image, filename, './mmod_crop')
         print('saved')
