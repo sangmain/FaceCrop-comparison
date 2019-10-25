@@ -20,15 +20,15 @@ def crop_progress(image):
 
     result_img = image.copy()
     h, w, _ = result_img.shape
-    blob = cv2.dnn.blobFromImage(result_img, 1.0, (300, 300), [104, 117, 123], False, False)
+    blob = cv2.dnn.blobFromImage(result_img, 1.0, (h, w), [104, 117, 123], False, False)
     net.setInput(blob)
 
     # inference, find faces
     detections = net.forward()
     # postprocessing
-    if detections.shape[2] == 0:
-        print('empty')
+
     faceBoxRectangleS = None
+    accuracy = 0.
     for i in range(detections.shape[2]):
         confidence = detections[0, 0, i, 2]
         if confidence > conf_threshold:
@@ -36,12 +36,16 @@ def crop_progress(image):
             y1 = int(detections[0, 0, i, 4] * h)
             x2 = int(detections[0, 0, i, 5] * w)
             y2 = int(detections[0, 0, i, 6] * h)
+            #, (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
-            print(x1, y1, x2, y2)
+            accuracy = confidence * 100
             faceBoxRectangleS =  dlib.rectangle(left=x1,top=y1,right=x2, bottom=y2)
 
     if faceBoxRectangleS == None:
-        print("empty")
+        print("face not found")
+        return None 
+
+    if accuracy < 90:
         return None
             # draw rects
 
@@ -63,7 +67,6 @@ def crop_progress(image):
     #     bottom = rect.bottom() - 0
     #     left = rect.left() + offset
     #     right = rect.right() - offset
-
 
 
     # - use landmark for cropping
@@ -132,7 +135,7 @@ def main(save_path):
 
 
         
-folder_path = 'D:\Sangmin\FaceCrop\\test_korean'
+folder_path = 'D:\Data\TrashData\X'
 STD_SIZE = 224
-main('test_korean_out')
+main('test_crop_out')
 print("finished")

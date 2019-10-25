@@ -92,7 +92,7 @@ def main(save_path):
             continue
         # cv2.imshow("cropped", cropped_image)
        
-        save_img(cropped_image, img_fp, './' + save_path)
+        save_img(cropped_image, img_fp, save_path)
         ##################### 크롭 이미지 출력
         
         
@@ -101,7 +101,7 @@ def main(save_path):
 
 
         
-folder_path = 'C:\\Users\\Sangmin\\Desktop\\predict'
+folder_path = 'D:\Data\FaceData\Predict_data'
 STD_SIZE = 224
-main('lsm')
+main('D:\Data\FaceData\\test_data')
 print("finished")
