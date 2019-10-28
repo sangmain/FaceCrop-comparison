@@ -11,7 +11,7 @@ net = cv2.dnn.readNetFromTensorflow(model_path, config_path)
 
 conf_threshold = 0.7
 # 얼굴인가
-def is_face(image, threshold= 90):
+def is_face(image, img_fp, threshold= 90):
     
     result_img = image.copy() #데이터의 복사본 제작
     h, w, _ = result_img.shape #데이터의 크기를 가져온다
@@ -29,9 +29,10 @@ def is_face(image, threshold= 90):
 
         if confidence > conf_threshold:
             accuracy = confidence * 100
+            print(accuracy)
 
-
-
+    if accuracy == 0.0:
+        return False
     if accuracy < threshold: # 얼굴일 확률이 threshold(기본값: 90) 보다 낮다면 얼굴이 아닌것으로 판단
         return False
 
@@ -44,6 +45,9 @@ import shutil
 import os
 
 def move_error(error_list):
+    if len(error_list) == 0:
+        print("no error list")
+        return
     for x_dir in error_list: #얼굴이 없는 이미지의 절대경로를 하나씩 갖고온다
         # print()
         # print(x_dir)
@@ -71,15 +75,14 @@ def move_error(error_list):
 
 
 # 얼굴인지를 확인할 데이터의 위치  "D:\Data\TrashData\\"
-folder_path = "D:\Data\TrashData\\"
+folder_path = "C:\Data\\a\\"
 # 얼굴인지를 확인할 데이터의 위치 내의 X와 Y 파일 이름
-x_path = 'X'
-y_path = 'Y'
+x_path = 'x'
+y_path = 'y'
 
 #경로 내에 있는 이미지의 위치를 정대 경로로 가져온다
 glob_path = folder_path + x_path + '/*jpg'
 filenames = glob.glob(glob_path)
-
 
 # 찾은 이미지의 갯수가 0개라면 
 if len(filenames) == 0:
@@ -87,15 +90,16 @@ if len(filenames) == 0:
     sys.exit()
 
 error_list = []
+cnt = 0
 for img_fp in filenames:
     # print()
-    # print(img_fp)
     image = cv2.imread(img_fp) #이미지를 절대 경로를 이용해 가져온다
 
-    if is_face(image): # 얼굴인지를 검사하고, 얼굴이면 넘어간다
+    if is_face(image, img_fp, 60): # 얼굴인지를 검사하고, 얼굴이면 넘어간다
         continue
     
-    
+    # if cnt == 50:
+    #     break
     error_list.append(img_fp) #얼굴이 아니면 에러 목록에 추가
 
 
