@@ -23,7 +23,7 @@ def save_img(image, filename, save_path, folder_path):
     cv2.imwrite(wfp_crop, image)
     
 
-def process2(image, filename, folder_path, save_path, size=224):
+def crop_process(image, filename, folder_path, save_path, size=224):
 
     if image is None:
         print("Could not read input image")

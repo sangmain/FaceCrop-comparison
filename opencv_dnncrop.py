@@ -16,11 +16,23 @@ face_regressor = dlib.shape_predictor(dlib_landmark_model)
 
 conf_threshold = 0.7
 
-def crop_progress(image):
 
-    result_img = image.copy()
-    h, w, _ = result_img.shape
-    blob = cv2.dnn.blobFromImage(result_img, 1.0, (300, 300), [104, 117, 123], False, False)
+def save_img(image, filename, save_path, folder_path):
+    suffix = get_suffix(filename) #suffix = '.jpg'
+    image_name = filename.replace(folder_path+'\\', '')
+    image_name = image_name.replace(suffix, '')
+    wfp_crop = save_path + '/{}.jpg'.format(image_name)
+    cv2.imwrite(wfp_crop, image)
+
+def crop_process(image, filename, folder_path, save_path, size=224):
+
+    if image is None:
+        print("Could not read input image")
+        return False
+
+
+    h, w, _ = image.shape
+    blob = cv2.dnn.blobFromImage(image, 1.0, (300, 300), [104, 117, 123], False, False)
     net.setInput(blob)
 
     # inference, find faces
@@ -42,7 +54,12 @@ def crop_progress(image):
             faceBoxRectangleS =  dlib.rectangle(left=x1,top=y1,right=x2, bottom=y2)
 
     if faceBoxRectangleS == None:
+        suffix = get_suffix(filename) #suffix = '.jpg'
+        image_name = filename.replace(folder_path+'\\', '')
+        with open('./notfound.txt', 'a+') as f:
+            f.write(image_name + '\n')
         print("face not found")
+        return False
 
     # - use landmark for cropping
     pts = face_regressor(image, faceBoxRectangleS).parts()
@@ -68,50 +85,7 @@ def crop_progress(image):
     cropped_image = crop_img(image, roi_box)
 
     # forward: one step
-    cropped_image = cv2.resize(cropped_image, dsize=(STD_SIZE, STD_SIZE), interpolation=cv2.INTER_LINEAR)
-    
+    cropped_image = cv2.resize(cropped_image, dsize=(size, size), interpolation=cv2.INTER_LINEAR)
+    save_img(cropped_image, filename, save_path, folder_path)
+    # print('saved')        
     return cropped_image
-
-def save_img(image, path, location):
-    suffix = get_suffix(path) #suffix = '.jpg'
-    image_name = path.replace(folder_path+'\\', '')
-    image_name = image_name.replace(suffix, '')
-    wfp_crop = location + '/{}_crop.jpg'.format(image_name)
-
-    cv2.imwrite(wfp_crop, image)
-    # print('Dump to {}'.format(wfp_csrop))
-
-def main(save_path):
-
-    glob_path = folder_path + '/*jpg'
-
-    filenames = glob.glob(glob_path)
-
-    if len(filenames) == 0:
-        print("no such directory")
-
-    for img_fp in filenames:
-        print()
-        print(img_fp)
-        img_ori = cv2.imread(img_fp)
-        cropped_image = img_ori
-        cropped_image = crop_progress(img_ori)
-        if cropped_image is None:
-            # print('crop none')
-            continue
-        # cv2.imshow("cropped", cropped_image)
-       
-        save_img(cropped_image, img_fp, './' + save_path)
-        ##################### 크롭 이미지 출력
-        
-        
-
-
-
-
-        
-folder_path = 'D:\Sangmin\FaceCrop\ear'
-# folder_path = 'D:\Data\FaceData\korean_face 13 degree'
-STD_SIZE = 224
-main('ear_out')
-print("finished")
