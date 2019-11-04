@@ -20,7 +20,7 @@ def crop_progress(image):
 
     result_img = image.copy()
     h, w, _ = result_img.shape
-    blob = cv2.dnn.blobFromImage(result_img, 1.0, (h, w), [104, 117, 123], False, False)
+    blob = cv2.dnn.blobFromImage(result_img, 1.0, (300, 300), [104, 117, 123], False, False)
     net.setInput(blob)
 
     # inference, find faces
@@ -43,31 +43,6 @@ def crop_progress(image):
 
     if faceBoxRectangleS == None:
         print("face not found")
-        return None 
-
-    if accuracy < 90:
-        return None
-            # draw rects
-
-            # cv2.rectangle(result_img, (x1, y1), (x2, y2), (255, 255, 255), int(round(h/150)), cv2.LINE_AA)
-            
-    # # inference time
-
-    # # visualize
-
-
-
-    # if len(rects) == 0:
-    #     # print("no face points found")
-    #     return
-
-    # for rect in rects:
-    #     offset = 0
-    #     top = rect.top()
-    #     bottom = rect.bottom() - 0
-    #     left = rect.left() + offset
-    #     right = rect.right() - offset
-
 
     # - use landmark for cropping
     pts = face_regressor(image, faceBoxRectangleS).parts()
@@ -135,7 +110,8 @@ def main(save_path):
 
 
         
-folder_path = 'D:\Data\TrashData\X'
+folder_path = 'D:\Sangmin\FaceCrop\ear'
+# folder_path = 'D:\Data\FaceData\korean_face 13 degree'
 STD_SIZE = 224
-main('test_crop_out')
+main('ear_out')
 print("finished")
