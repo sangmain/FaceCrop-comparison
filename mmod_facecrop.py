@@ -8,6 +8,7 @@ import glob
 import dlib
 import sys
 import multiprocessing as mp
+import ntpath
 
 dlib_landmark_model = 'models/shape_predictor_68_face_landmarks.dat'
 cnn_face_detector = dlib.cnn_face_detection_model_v1('./models/mmod_human_face_detector.dat')
@@ -15,11 +16,10 @@ cnn_face_detector = dlib.cnn_face_detection_model_v1('./models/mmod_human_face_d
 face_regressor = dlib.shape_predictor(dlib_landmark_model)
 
 
-def save_img(image, filename, save_path, folder_path):
-    suffix = get_suffix(filename) #suffix = '.jpg'
-    image_name = filename.replace(folder_path+'\\', '')
-    image_name = image_name.replace(suffix, '')
-    wfp_crop = save_path + '/{}.jpg'.format(image_name)
+def save_img(image, filename, save_path):
+    image_name = ntpath.basename(filename)
+    wfp_crop = save_path + '/{}'.format(image_name)
+    print(wfp_crop)
     cv2.imwrite(wfp_crop, image)
     
 
@@ -37,6 +37,10 @@ def crop_process(image, filename, folder_path, save_path, size=224):
 
     end = time.time()
     print("CNN : ", format(end - start, '.2f'))
+    print(len(faces_cnn))
+    if len(faces_cnn) == 0:
+        print("no face found")
+        return False    
 
     # loop over detected faces
     for face in faces_cnn:
@@ -72,7 +76,7 @@ def crop_process(image, filename, folder_path, save_path, size=224):
 
         # forward: one step
         cropped_image = cv2.resize(cropped_image, dsize=(size, size), interpolation=cv2.INTER_LINEAR)
-        save_img(cropped_image, filename, save_path, folder_path)
+        save_img(cropped_image, filename, save_path)
         print('saved')        
         return cropped_image
         
