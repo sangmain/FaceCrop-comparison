@@ -3,8 +3,8 @@ from glob import glob
 
 
 
-folder_path = 'D:\\Data\\FaceData\\KR_FACE_GATHERED'
-second_path = 'D:\\Data\\224\\36000'
+folder_path = 'D:\\Selected_Img_more'
+second_path = 'D:\\Data\\New_data\\X_train'
 
 filenames_ori = glob(folder_path +'/*jpg')
 filenames_crop = glob(second_path +'/*jpg')

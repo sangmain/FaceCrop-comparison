@@ -56,9 +56,8 @@ def crop_process(image, filename, folder_path, save_path, size=224):
     if faceBoxRectangleS == None:
         suffix = get_suffix(filename) #suffix = '.jpg'
         image_name = filename.replace(folder_path+'\\', '')
-        with open('./notfound.txt', 'a+') as f:
+        with open('./notfound2.txt', 'a+') as f:
             f.write(image_name + '\n')
-        print("face not found")
         return False
 
     # - use landmark for cropping

@@ -7,7 +7,6 @@ from utils.inference import get_suffix, crop_img, parse_roi_box_from_landmark
 import glob
 import dlib
 import sys
-import multiprocessing as mp
 import ntpath
 
 dlib_landmark_model = 'models/shape_predictor_68_face_landmarks.dat'
@@ -42,42 +41,45 @@ def crop_process(image, filename, folder_path, save_path, size=224):
         print("no face found")
         return False    
 
+    print(len(faces_cnn))
     # loop over detected faces
-    for face in faces_cnn:
-        left = face.rect.left()
-        top = face.rect.top()
-        right = face.rect.right()
-        bottom = face.rect.bottom()
+    face =  faces_cnn[0]
+    left = face.rect.left()
+    top = face.rect.top()
+    right = face.rect.right()
+    bottom = face.rect.bottom()
 
-        faceBoxRectangleS =  dlib.rectangle(left=left,top=top,right=right, bottom=bottom)
+    faceBoxRectangleS =  dlib.rectangle(left=left,top=top,right=right, bottom=bottom)
 
-        # - use landmark for cropping
-        pts = face_regressor(image, faceBoxRectangleS).parts()
-        pts = np.array([[pt.x, pt.y] for pt in pts]).T
-        roi_box = parse_roi_box_from_landmark(pts)
+    # - use landmark for cropping
+    pts = face_regressor(image, faceBoxRectangleS).parts()
+    pts = np.array([[pt.x, pt.y] for pt in pts]).T
+    roi_box = parse_roi_box_from_landmark(pts)
 
-        height, width, _ =  image.shape
+    height, width, _ =  image.shape
 
-        ########## left
-        if roi_box[0] < 0:
-            roi_box[0] = 0
-        ########## right        
-        if roi_box[1] < 0:
-            roi_box[1] = 0
-        ########## width
-        if roi_box[2] > width:
-            roi_box[2] = width
-        ########## height
-        if roi_box[3] > height:
-            roi_box[3] = height
+    ########## left
+    if roi_box[0] < 0:
+        roi_box[0] = 0
+    ########## right        
+    if roi_box[1] < 0:
+        roi_box[1] = 0
+    ########## width
+    if roi_box[2] > width:
+        roi_box[2] = width
+    ########## height
+    if roi_box[3] > height:
+        roi_box[3] = height
 
 
-        cropped_image = crop_img(image, roi_box)
+    cropped_image = crop_img(image, roi_box)
 
-        # forward: one step
-        cropped_image = cv2.resize(cropped_image, dsize=(size, size), interpolation=cv2.INTER_LINEAR)
-        save_img(cropped_image, filename, save_path)
-        print('saved')        
-        return cropped_image
-        
-    return False
+    # forward: one step
+    cropped_image = cv2.resize(cropped_image, dsize=(size, size), interpolation=cv2.INTER_LINEAR)
+    save_img(cropped_image, filename, save_path)
+    print('saved')        
+    return cropped_image
+
+if __name__ == '__main__':
+    image = cv2.imread('D:\Data\FaceData\\crop_test\\17080801_S001_L02_E01_C1.jpg')
+    crop_process(image, 0, 0, 0)

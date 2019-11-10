@@ -9,10 +9,10 @@ import mmod_facecrop as mmod
 import opencv_dnncrop as dnn
 import frontal_facecrop as frt
 
-STD_SIZE = 224
+STD_SIZE = 128
 
-folder_path = 'D:\\Data\\FaceData\\KR_FACE_GATHERED'
-save_path = 'D:\\Data\\224\\36000'
+folder_path = 'D:\\Selected_Img_more'
+save_path = 'D:\\Data\\Error'
 
 # glob_path = folder_path + '/*jpg'
 # filenames = glob(glob_path)
@@ -24,8 +24,8 @@ def aaa(result):
     string.append('aaa')
 
 if __name__ == '__main__':
-    # with open('./notfound.txt', 'r') as f:
-    #     filenames = f.readlines()
+    with open('./notfound.txt', 'r') as f:
+        filenames = f.readlines()
 
     pool = mp.Pool(processes=mp.cpu_count())
 
@@ -38,12 +38,12 @@ if __name__ == '__main__':
         # cv2.imshow("test", image)
         # cv2.waitKey(0)
         ################ MMOD ################
-        result = pool.apply_async(mmod.crop_process, (image, filename, folder_path, save_path), callback= aaa)
-        results.append(result)
+        # result = pool.apply_async(mmod.crop_process, (image, filename, folder_path, save_path), callback= aaa)
+        # results.append(result)
 
         ################ DNN ################
-        # result = pool.apply_async(dnn.crop_process, (image, filename, folder_path, save_path), callback= aaa)
-        # results.append(result)
+        result = pool.apply_async(dnn.crop_process, (image, filename, folder_path, save_path), callback= aaa)
+        results.append(result)
 
         ################ Frontal Face ################
         # result = pool.apply_async(frt.crop_process, (image, filename, folder_path, save_path), callback= aaa)

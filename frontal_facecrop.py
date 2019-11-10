@@ -37,41 +37,41 @@ def crop_process(image, filename, folder_path, save_path, size=224):
         print("face not found")
         return False
 
-    for rect in rects:
-        offset = 0
-        top = rect.top()
-        bottom = rect.bottom() - 0
-        left = rect.left() + offset
-        right = rect.right() - offset
+    rect = rects[0]
+    offset = 0
+    top = rect.top()
+    bottom = rect.bottom() - 0
+    left = rect.left() + offset
+    right = rect.right() - offset
 
 
-        faceBoxRectangleS =  dlib.rectangle(left=left,top=top,right=right, bottom=bottom)
+    faceBoxRectangleS =  dlib.rectangle(left=left,top=top,right=right, bottom=bottom)
 
-        # - use landmark for cropping
-        pts = face_regressor(image, faceBoxRectangleS).parts()
-        pts = np.array([[pt.x, pt.y] for pt in pts]).T
-        roi_box = parse_roi_box_from_landmark(pts)
+    # - use landmark for cropping
+    pts = face_regressor(image, faceBoxRectangleS).parts()
+    pts = np.array([[pt.x, pt.y] for pt in pts]).T
+    roi_box = parse_roi_box_from_landmark(pts)
 
-        height, width, _ =  image.shape
+    height, width, _ =  image.shape
 
-        ########## left
-        if roi_box[0] < 0:
-            roi_box[0] = 0
-        ########## right        
-        if roi_box[1] < 0:
-            roi_box[1] = 0
-        ########## width
-        if roi_box[2] > width:
-            roi_box[2] = width
-        ########## height
-        if roi_box[3] > height:
-            roi_box[3] = height
+    ########## left
+    if roi_box[0] < 0:
+        roi_box[0] = 0
+    ########## right        
+    if roi_box[1] < 0:
+        roi_box[1] = 0
+    ########## width
+    if roi_box[2] > width:
+        roi_box[2] = width
+    ########## height
+    if roi_box[3] > height:
+        roi_box[3] = height
 
 
-        cropped_image = crop_img(image, roi_box)
+    cropped_image = crop_img(image, roi_box)
 
-        # forward: one step
-        cropped_image = cv2.resize(cropped_image, dsize=(size, size), interpolation=cv2.INTER_LINEAR)
-        save_img(cropped_image, filename, save_path, folder_path)
-        # print('saved')        
-        return cropped_image
+    # forward: one step
+    cropped_image = cv2.resize(cropped_image, dsize=(size, size), interpolation=cv2.INTER_LINEAR)
+    save_img(cropped_image, filename, save_path, folder_path)
+    # print('saved')        
+    return cropped_image
